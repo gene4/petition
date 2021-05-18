@@ -1,0 +1,26 @@
+body {
+    color: #35302e;
+}
+
+.petition-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+h1 {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 36px;
+}
+
+img {
+    border-radius: 50%;
+}
+
+#sig-url {
+    visibility: hidden;
+}
+
+canvas {
+    border: black solid 2px;
+    z-index: 1;
+}
