@@ -1,7 +1,6 @@
 const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
 var dataURL = canvas.toDataURL();
-var submit = document.querySelector("button");
 var sigUrl = document.getElementById("sig-url");
 let x = 0;
 let y = 0;
@@ -12,6 +11,7 @@ document.addEventListener("mousedown", function startPos(e) {
 });
 document.addEventListener("mouseup", function stopPos() {
     document.removeEventListener("mousemove", draw);
+    sigUrl.value = dataURL;
 });
 
 function reposition(event) {
@@ -29,8 +29,3 @@ function draw(e) {
     ctx.lineTo(x, y);
     ctx.stroke();
 }
-
-submit.addEventListener("click", () => {
-    console.log(dataURL);
-    sigUrl.value = dataURL;
-});

@@ -9,12 +9,12 @@ module.exports.getSignatures = () => {
     return db.query(q);
 };
 
-module.exports.addSignature = (id, first_name, last_name, signature) => {
+module.exports.addSignature = (first_name, last_name, signature) => {
     const q = `
-    INSERT INTO cities (id, first_name, last_name, signature)
-    values ($1, $2, $3, $4)  
-    RETURNING id;
+    INSERT INTO signatures (first_name, last_name, signature)
+    values ($1, $2, $3)  
+    RETURNING id
     `;
-    const params = [id, first_name, last_name, signature];
+    const params = [first_name, last_name, signature];
     return db.query(q, params);
 };

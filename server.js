@@ -9,34 +9,42 @@ app.engine("handlebars", hb());
 app.set("view engine", "handlebars");
 
 app.use(
+    express.urlencoded({
+        extended: false,
+    })
+);
+
+app.use(
     cookieSession({
-        secret: `I'm always angry.`,
+        secret: `I'm the cookie monster!`,
         maxAge: 1000 * 60 * 60 * 24 * 14,
     })
 );
 
 app.use(express.static("public"));
 
-app.use(
-    express.urlencoded({
-        extended: false,
-    })
-);
-
-// app.use(cookieParser());
-
 app.get("/", (req, res) => {
     res.redirect("/petition");
 });
 
 app.get("/petition", (req, res) => {
+    if ("signatureId" in req.session) {
+        res.redirect("/thanks");
+    }
     res.render("petition", {
         layout: "main",
     });
 });
 
 app.post("/petition", (req, res) => {
-    db.addSignature(r);
+    db.addSignature(req.body.first, req.body.last, req.body.sig)
+
+        .then((result) => {
+            req.session.signatureId = result.rows[0].id;
+            console.log(req.session);
+            res.redirect("/thanks");
+        })
+        .catch((e) => console.log(e));
 });
 
 // app.get("/cities", (req, res) => {
@@ -48,13 +56,13 @@ app.post("/petition", (req, res) => {
 //         .catch((e) => console.log(e));
 // });
 
-app.get("/add-city", (req, res) => {
-    console.log("made it add city");
-    db.addCity("lima", 10002020, "peru")
-        .then((result) => {
-            console.log(result);
-        })
-        .catch((e) => console.log(e));
-});
+// app.get("/add-city", (req, res) => {
+//     console.log("made it add city");
+//     db.addCity("lima", 10002020, "peru")
+//         .then((result) => {
+//             console.log(result);
+//         })
+//         .catch((e) => console.log(e));
+// });
 
 app.listen(8080, () => console.log("petition up and running"));
