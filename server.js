@@ -44,7 +44,36 @@ app.post("/petition", (req, res) => {
             console.log(req.session);
             res.redirect("/thanks");
         })
-        .catch((e) => console.log(e));
+        .catch((e) => {
+            console.log(e);
+            res.render("petition", {
+                layout: "main",
+                helpers: {
+                    error: true,
+                },
+            });
+        });
+});
+
+app.get("/thanks", (req, res) => {
+    if ("signatureId" in req.session) {
+        res.render("thanks", {
+            layout: "main",
+        });
+    } else {
+        res.redirect("/petition");
+    }
+});
+
+app.get("/signers", (req, res) => {
+    if ("signatureId" in req.session) {
+        res.render("signers", {
+            layout: "main",
+            name: db.first,
+        });
+    } else {
+        res.redirect("/petition");
+    }
 });
 
 // app.get("/cities", (req, res) => {

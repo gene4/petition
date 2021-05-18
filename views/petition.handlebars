@@ -7,12 +7,25 @@
         alt="Bobsponge sending a letter"
     />
     <form method="POST">
-        <input type="text" name="first" id="first_name" />
-        <input type="text" name="last" id="last-name" />
+        <div class="first-name">
+            <input
+                type="text"
+                name="first"
+                id="first_name"
+                placeholder="First Name"
+            /></div>
+        <div class="last-name"><input
+                type="text"
+                name="last"
+                id="last-name"
+                placeholder="Last Name"
+            /></div>
+
         <input type="text" name="sig" id="sig-url" />
 
-        <br />
+        <label for="" id="sign-here">Sign Here:</label>
         <canvas id="canvas"></canvas>
         <button> submit </button>
+        {{#if ../error}} <h2>Something went wrong... please try again!</h2>{{/if}}
     </form>
 </div>

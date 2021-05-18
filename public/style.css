@@ -1,5 +1,6 @@
 body {
     color: #35302e;
+    background-color: rgb(231, 231, 231);
 }
 
 .petition-container {
@@ -8,14 +9,49 @@ body {
     align-items: center;
 }
 h1 {
-    font-family: Arial, Helvetica, sans-serif;
+    font-family: "Roboto", sans-serif;
     font-size: 36px;
+    font-weight: 500;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    margin-top: 20px;
+    align-items: center;
+}
+
+input {
+    width: 200px;
+    padding: 8px;
+    font-size: 1rem;
+    border-radius: 5px;
+    margin: 2px;
+    border: solid 1px #dbd9db;
+}
+
+.first-name,
+.last-name {
+    width: 250px;
+
+    font-family: "Roboto", sans-serif;
+
+    display: flex;
+    justify-content: space-around;
+}
+
+#sign-here {
+    text-align: center;
+    margin: 10px;
 }
 
 img {
     border-radius: 50%;
 }
-
+button {
+    margin: 10px;
+    width: 100px;
+}
 #sig-url {
     visibility: hidden;
 }
@@ -23,4 +59,6 @@ img {
 canvas {
     border: black solid 2px;
     z-index: 1;
+    width: 250px;
+    height: 80px;
 }

@@ -5,6 +5,9 @@ var sigUrl = document.getElementById("sig-url");
 let x = 0;
 let y = 0;
 
+// ctx.canvas.width = canvas.innerWidth;
+// ctx.canvas.height = canvas.innerHeight;
+
 document.addEventListener("mousedown", function startPos(e) {
     document.addEventListener("mousemove", draw);
     reposition(e);
