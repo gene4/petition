@@ -48,18 +48,25 @@ app.post("/petition", (req, res) => {
             console.log(e);
             res.render("petition", {
                 layout: "main",
-                helpers: {
-                    error: true,
-                },
+                error: true,
             });
         });
 });
 
 app.get("/thanks", (req, res) => {
     if ("signatureId" in req.session) {
-        res.render("thanks", {
-            layout: "main",
-        });
+        console.log(req.session.signatureId);
+        db.getUserSignature(req.session.signatureId)
+            .then((result) => {
+                console.log(result.rows[0].signature);
+                res.render("thanks", {
+                    layout: "main",
+                    signature: result.rows[0].signature,
+                });
+            })
+            .catch((e) => {
+                console.log(e);
+            });
     } else {
         res.redirect("/petition");
     }
@@ -67,10 +74,17 @@ app.get("/thanks", (req, res) => {
 
 app.get("/signers", (req, res) => {
     if ("signatureId" in req.session) {
-        res.render("signers", {
-            layout: "main",
-            name: db.first,
-        });
+        db.getSignatures()
+            .then(({ rows }) => {
+                console.log(rows);
+                res.render("signers", {
+                    layout: "main",
+                    rows,
+                });
+            })
+            .catch((e) => {
+                console.log(e);
+            });
     } else {
         res.redirect("/petition");
     }
