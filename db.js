@@ -10,12 +10,22 @@ module.exports.getUserSignature = (userId) => {
     return db.query(`SELECT signature FROM signatures WHERE id=$1`, [userId]);
 };
 
-module.exports.addSignature = (first_name, last_name, signature) => {
+module.exports.addSignature = (signature) => {
     const q = `
-    INSERT INTO signatures (first_name, last_name, signature)
-    values ($1, $2, $3)  
+    INSERT INTO signatures (signature)
+    values ($1)  
     RETURNING id
     `;
-    const params = [first_name, last_name, signature];
+    const params = [signature];
+    return db.query(q, params);
+};
+
+module.exports.addUser = (first, last, email, password) => {
+    const q = `
+    INSERT INTO signatures (first, last, email, password)
+    values ($1, $2, $3, $4)  
+    RETURNING id
+    `;
+    const params = [first, last, email, password];
     return db.query(q, params);
 };
