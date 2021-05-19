@@ -2,11 +2,24 @@ const express = require("express");
 const app = express();
 const db = require("./db");
 const cookieSession = require("cookie-session");
-// const cookieParser = require("cookie-parser");
+const csurf = require("csurf");
 const hb = require("express-handlebars");
 
 app.engine("handlebars", hb());
 app.set("view engine", "handlebars");
+
+app.use((req, res, next) => {
+    res.setHeader("x-frame-options", "deny");
+    next();
+});
+
+app.use(
+    cookieSession({
+        secret: `I'm the cookie monster!`,
+        maxAge: 1000 * 60 * 60 * 24 * 14,
+        sameSite: "strict",
+    })
+);
 
 app.use(
     express.urlencoded({
@@ -14,12 +27,12 @@ app.use(
     })
 );
 
-app.use(
-    cookieSession({
-        secret: `I'm the cookie monster!`,
-        maxAge: 1000 * 60 * 60 * 24 * 14,
-    })
-);
+app.use(csurf());
+
+app.use(function (req, res, next) {
+    res.locals.csrfToken = req.csrfToken();
+    next();
+});
 
 app.use(express.static("public"));
 
@@ -89,23 +102,5 @@ app.get("/signers", (req, res) => {
         res.redirect("/petition");
     }
 });
-
-// app.get("/cities", (req, res) => {
-//     console.log("made in to cities route");
-//     db.getCities()
-//         .then((result) => {
-//             console.log("result: ", result);
-//         })
-//         .catch((e) => console.log(e));
-// });
-
-// app.get("/add-city", (req, res) => {
-//     console.log("made it add city");
-//     db.addCity("lima", 10002020, "peru")
-//         .then((result) => {
-//             console.log(result);
-//         })
-//         .catch((e) => console.log(e));
-// });
 
 app.listen(8080, () => console.log("petition up and running"));

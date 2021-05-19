@@ -1,6 +1,5 @@
 const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
-var dataURL = canvas.toDataURL();
 var sigUrl = document.getElementById("sig-url");
 let x = 0;
 let y = 0;
@@ -14,6 +13,7 @@ document.addEventListener("mousedown", function startPos(e) {
 });
 document.addEventListener("mouseup", function stopPos() {
     document.removeEventListener("mousemove", draw);
+    var dataURL = canvas.toDataURL();
     sigUrl.value = dataURL;
 });
 

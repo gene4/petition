@@ -21,11 +21,11 @@
                 placeholder="Last Name"
             /></div>
 
-        <input type="text" name="sig" id="sig-url" />
-
+        <input type="hidden" name="_csrf" value="{{csrfToken}}" />
         <label for="" id="sign-here">Sign Here:</label>
         <canvas id="canvas"></canvas>
         <button> submit </button>
         {{#if error}} <h2>Something went wrong... please try again!</h2>{{/if}}
+        <input type="text" name="sig" id="sig-url" />
     </form>
 </div>
