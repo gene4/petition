@@ -1,9 +1,13 @@
 const spicedPg = require("spiced-pg");
 const db = spicedPg("postgres:postgres:postgres@localhost:5432/petition");
 
-module.exports.getSignatures = () => {
-    const q = `SELECT * FROM signatures`;
+module.exports.getUsers = () => {
+    const q = `SELECT * FROM users`;
     return db.query(q);
+};
+
+module.exports.getUserPassword = (userEmail) => {
+    return db.query(`SELECT password FROM users WHERE email=$1`, [userEmail]);
 };
 
 module.exports.getUserSignature = (userId) => {
@@ -22,7 +26,7 @@ module.exports.addSignature = (signature) => {
 
 module.exports.addUser = (first, last, email, password) => {
     const q = `
-    INSERT INTO signatures (first, last, email, password)
+    INSERT INTO users (first, last, email, password)
     values ($1, $2, $3, $4)  
     RETURNING id
     `;

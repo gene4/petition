@@ -79,11 +79,6 @@ app.get("/petition", (req, res) => {
 });
 
 app.post("/register", (req, res) => {
-    // when a user registers, we want to go ahead, and hash their password,
-    // and subsequently store all the user info in our database
-    // in your post route later on, you'll be retrieving the user password from the request body,
-    // so it'll be sth like req.body.password
-    // below we are hard coding out pw -> in your projects you want to use whatever the user has given you!
     hash(req.body.password)
         .then((hashedPw) => {
             console.log("hashedPwd in /register", hashedPw);
@@ -100,10 +95,53 @@ app.post("/register", (req, res) => {
                         error: true,
                     });
                 });
-            // once we have successfully hashed a user's pw, we want to add all user info + the hash
-            // into our db, set a cookie, that the user is logged in, and redirect them somewhere else
         })
         .catch((err) => console.log("err in hash:", err));
+});
+
+app.post("/login", (req, res) => {
+    db.getUserPassword(req.body.email)
+        .then((result) => {
+            let hashFromDb = result.rows[0].password;
+            compare(req.body.password, hashFromDb)
+                .then((match) => {
+                    if (match) {
+                        req.session.userId = result.rows[0].userId;
+                        console.log("is the password correct?", match);
+                        db.getUserSignature(req.session.userId)
+                            .then((result) => {
+                                if (result.rows.length == 0) {
+                                    res.redirect("/petition");
+                                } else {
+                                    console.log(
+                                        "rows should be full",
+                                        result.rows
+                                    );
+                                    req.session.signatureId = result.rows[0].id;
+                                    res.redirect("/thanks");
+                                }
+                            })
+                            .catch((e) => {
+                                console.log(e);
+                            });
+                    } else {
+                        res.render("login", {
+                            layout: "main",
+                            error: true,
+                        });
+                    }
+                })
+                .catch((err) => {
+                    console.log("err in compare", err);
+                });
+        })
+        .catch((err) => {
+            console.log("err in finding email", err);
+            res.render("login", {
+                layout: "main",
+                email: true,
+            });
+        });
 });
 
 app.post("/petition", (req, res) => {
@@ -125,7 +163,6 @@ app.post("/petition", (req, res) => {
 
 app.get("/thanks", (req, res) => {
     if ("signatureId" in req.session) {
-        // console.log(req.session.signatureId);
         db.getUserSignature(req.session.signatureId)
             .then((result) => {
                 // console.log(result.rows[0].signature);
@@ -144,7 +181,7 @@ app.get("/thanks", (req, res) => {
 
 app.get("/signers", (req, res) => {
     if ("signatureId" in req.session) {
-        db.getSignatures()
+        db.getUsers()
             .then(({ rows }) => {
                 console.log(rows);
                 res.render("signers", {
