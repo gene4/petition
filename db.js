@@ -1,26 +1,33 @@
 const spicedPg = require("spiced-pg");
 const db = spicedPg("postgres:postgres:postgres@localhost:5432/petition");
 
-module.exports.getUsers = () => {
-    const q = `SELECT * FROM users`;
+module.exports.getSignedUsers = () => {
+    const q = `SELECT * FROM users JOIN signatures ON users.id = signatures.user_id LEFT OUTER JOIN user_profiles ON signatures.user_id = user_profiles.user_id WHERE LOWER(city) = LOWER($1)`;
     return db.query(q);
 };
 
-module.exports.getUserPassword = (userEmail) => {
-    return db.query(`SELECT password FROM users WHERE email=$1`, [userEmail]);
+module.exports.getUser = (userEmail) => {
+    // const q = `SELECT * FROM users `;
+    return db.query(`SELECT * FROM users WHERE email=$1`, [userEmail]);
 };
 
-module.exports.getUserSignature = (userId) => {
-    return db.query(`SELECT signature FROM signatures WHERE id=$1`, [userId]);
+module.exports.getUserSignature = (signatureId) => {
+    const q = `SELECT signature FROM signatures WHERE id=$1`;
+    const params = [signatureId];
+    return db.query(q, params);
 };
 
-module.exports.addSignature = (signature) => {
+module.exports.checkSigned = (userId) => {
+    return db.query(`SELECT *  FROM signatures WHERE user_id=$1`, [userId]);
+};
+
+module.exports.addSignature = (signature, user_id) => {
     const q = `
-    INSERT INTO signatures (signature)
-    values ($1)  
+    INSERT INTO signatures (signature, user_id)
+    values ($1, $2)  
     RETURNING id
     `;
-    const params = [signature];
+    const params = [signature, user_id];
     return db.query(q, params);
 };
 
@@ -31,5 +38,15 @@ module.exports.addUser = (first, last, email, password) => {
     RETURNING id
     `;
     const params = [first, last, email, password];
+    return db.query(q, params);
+};
+
+module.exports.addProfile = (age, city, homepage, user_id) => {
+    const q = `
+    INSERT INTO user_profiles (age, city, homepage, user_id)
+    values ($1, $2, $3, $4)  
+    RETURNING id
+    `;
+    const params = [age, city, homepage, user_id];
     return db.query(q, params);
 };

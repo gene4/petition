@@ -1,4 +1,5 @@
 DROP TABLE IF EXISTS signatures;
+DROP TABLE IF EXISTS user_profiles;
 DROP TABLE IF EXISTS users;
 
 CREATE TABLE users(
@@ -18,4 +19,12 @@ CREATE TABLE users(
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       );
 
+ 
+  CREATE TABLE user_profiles(
+      id SERIAL PRIMARY KEY,
+      age INT,
+      city VARCHAR(100),
+      homepage VARCHAR(300),
+      user_id INT REFERENCES users(id) NOT NULL UNIQUE
+  );
 

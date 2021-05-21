@@ -78,6 +78,36 @@ app.get("/petition", (req, res) => {
     });
 });
 
+app.get("/profile", (req, res) => {
+    res.render("profile", {
+        layout: "main",
+    });
+});
+
+app.post("/profile", (req, res) => {
+    let checkedHompage = "";
+    if (
+        req.body.homepage.startsWith("http://") ||
+        req.body.homepage.startsWith("https://")
+    ) {
+        checkedHompage = req.body.homepage;
+    } else {
+        checkedHompage = "https://" + req.body.homepage;
+    }
+    db.addProfile(
+        req.body.age,
+        req.body.city,
+        checkedHompage,
+        req.session.userId
+    )
+        .then((result) => {
+            res.redirect("/petition");
+        })
+        .catch((e) => {
+            console.log(e);
+        });
+});
+
 app.post("/register", (req, res) => {
     hash(req.body.password)
         .then((hashedPw) => {
@@ -86,7 +116,7 @@ app.post("/register", (req, res) => {
                 .then((result) => {
                     req.session.userId = result.rows[0].id;
                     console.log(req.session);
-                    res.redirect("/petition");
+                    res.redirect("/profile");
                 })
                 .catch((e) => {
                     console.log(e);
@@ -98,27 +128,23 @@ app.post("/register", (req, res) => {
         })
         .catch((err) => console.log("err in hash:", err));
 });
-
 app.post("/login", (req, res) => {
-    db.getUserPassword(req.body.email)
+    db.getUser(req.body.email)
         .then((result) => {
             let hashFromDb = result.rows[0].password;
             compare(req.body.password, hashFromDb)
                 .then((match) => {
                     if (match) {
-                        req.session.userId = result.rows[0].userId;
-                        console.log("is the password correct?", match);
-                        db.getUserSignature(req.session.userId)
+                        req.session.userId = result.rows[0].id;
+                        console.log("match password", req.session);
+                        db.checkSigned(req.session.userId)
                             .then((result) => {
-                                if (result.rows.length == 0) {
-                                    res.redirect("/petition");
-                                } else {
-                                    console.log(
-                                        "rows should be full",
-                                        result.rows
-                                    );
+                                console.log("result after checkSigned", result);
+                                if (result.rows[0]) {
                                     req.session.signatureId = result.rows[0].id;
                                     res.redirect("/thanks");
+                                } else {
+                                    res.redirect("/petition");
                                 }
                             })
                             .catch((e) => {
@@ -131,12 +157,12 @@ app.post("/login", (req, res) => {
                         });
                     }
                 })
-                .catch((err) => {
-                    console.log("err in compare", err);
+                .catch((e) => {
+                    console.log("cant find password", e);
                 });
         })
-        .catch((err) => {
-            console.log("err in finding email", err);
+        .catch((e) => {
+            console.log("cant find email", e);
             res.render("login", {
                 layout: "main",
                 email: true,
@@ -145,8 +171,7 @@ app.post("/login", (req, res) => {
 });
 
 app.post("/petition", (req, res) => {
-    db.addSignature(req.body.sig)
-
+    db.addSignature(req.body.sig, req.session.userId)
         .then((result) => {
             req.session.signatureId = result.rows[0].id;
             // console.log(req.session);
@@ -181,7 +206,7 @@ app.get("/thanks", (req, res) => {
 
 app.get("/signers", (req, res) => {
     if ("signatureId" in req.session) {
-        db.getUsers()
+        db.getSignedUsers()
             .then(({ rows }) => {
                 console.log(rows);
                 res.render("signers", {
@@ -195,6 +220,12 @@ app.get("/signers", (req, res) => {
     } else {
         res.redirect("/petition");
     }
+});
+
+app.get("/signers/:city", (req, res) => {
+    res.render("signers-city", {
+        layout: "main",
+    });
 });
 
 app.listen(8080, () => console.log("petition up and running"));
