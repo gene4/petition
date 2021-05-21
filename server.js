@@ -228,4 +228,6 @@ app.get("/signers/:city", (req, res) => {
     });
 });
 
-app.listen(8080, () => console.log("petition up and running"));
+app.listen(process.env.PORT || 8080, () =>
+    console.log("petition up and running")
+);

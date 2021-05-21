@@ -1,8 +1,11 @@
 const spicedPg = require("spiced-pg");
-const db = spicedPg("postgres:postgres:postgres@localhost:5432/petition");
+const db = spicedPg(
+    process.env.DATABASE_URL ||
+        "postgres:postgres:postgres@localhost:5432/petition"
+);
 
 module.exports.getSignedUsers = () => {
-    const q = `SELECT * FROM users JOIN signatures ON users.id = signatures.user_id LEFT OUTER JOIN user_profiles ON signatures.user_id = user_profiles.user_id WHERE LOWER(city) = LOWER($1)`;
+    const q = `SELECT * FROM users JOIN signatures ON users.id = signatures.user_id LEFT OUTER JOIN user_profiles ON signatures.user_id = user_profiles.user_id`;
     return db.query(q);
 };
 
