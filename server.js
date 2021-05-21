@@ -21,6 +21,9 @@ app.set("view engine", "handlebars");
 //////// MIDDLEWARE //////
 /////////////////////////
 
+const COOKIE_SECRET =
+    process.env.COOKIE_SECRET || require("./secrets.json").COOKIE_SECRET;
+
 app.use((req, res, next) => {
     res.setHeader("x-frame-options", "deny");
     next();
@@ -28,7 +31,7 @@ app.use((req, res, next) => {
 
 app.use(
     cookieSession({
-        secret: `I'm the cookie monster!`,
+        COOKIE_SECRET,
         maxAge: 1000 * 60 * 60 * 24 * 14,
         sameSite: "strict",
     })
