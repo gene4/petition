@@ -1,5 +1,6 @@
 const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
+const button = document.querySelector("button");
 var sigUrl = document.getElementById("sig-url");
 let x = 0;
 let y = 0;
@@ -7,6 +8,9 @@ let y = 0;
 // ctx.canvas.width = canvas.innerWidth;
 // ctx.canvas.height = canvas.innerHeight;
 
+button.addEventListener("mouseenter", () => {
+    button.classList.add("overlay");
+});
 document.addEventListener("mousedown", function startPos(e) {
     document.addEventListener("mousemove", draw);
     reposition(e);

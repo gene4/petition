@@ -1,33 +1,41 @@
-<h1>Lets make German bureau's stop using paper
-    <br />
-    letters as a means of communication!
-    <br />
-    Sign our petition today!</h1>
-<form method="POST">
-    <div class="first-name">
-        <input
-            type="text"
-            name="first"
-            id="first_name"
-            placeholder="First Name"
-        /></div>
-    <div class="last-name"><input
-            type="text"
-            name="last"
-            id="last-name"
-            placeholder="Last Name"
-        /></div>
-    <div class="email">
-        <input type="text" name="email" id="email" placeholder="Email" /></div>
-    <div class="password"><input
-            type="text"
-            name="password"
-            id="password"
-            placeholder="Password"
-        /></div>
+<div class="petition-container">
+    <h1>Lets make German bureau's stop using paper
+        <br />
+        letters as a means of communication!
+        <br />
+        <h3>Please register to sign our petition!</h3></h1>
+    <form method="POST">
+        <div class="first-name">
+            <input
+                type="text"
+                name="first"
+                id="first_name"
+                placeholder="First Name"
+            /></div>
+        <div class="last-name"><input
+                type="text"
+                name="last"
+                id="last-name"
+                placeholder="Last Name"
+            /></div>
+        <div class="email">
+            <input
+                type="text"
+                name="email"
+                id="email"
+                placeholder="Email"
+            /></div>
+        <div class="password"><input
+                type="text"
+                name="password"
+                id="password"
+                placeholder="Password"
+            /></div>
 
-    <button> Register </button>
-    <input type="hidden" name="_csrf" value="{{csrfToken}}" />
-    {{#if error}} <h2>Something went wrong... please try again!</h2>{{/if}}
+        <button> Register </button>
+        <input type="hidden" name="_csrf" value="{{csrfToken}}" />
+        {{#if error}} <h2>Something went wrong... please try again!</h2>{{/if}}
+        <h2>Already registered? Login <a href="/login">here</a>.</h2>
+    </form>
 
-</form>
+</div>

@@ -1,16 +1,24 @@
-<h1>Please log in</h1>
-<form method="POST">
-    <div class="email">
-        <input type="text" name="email" id="email" placeholder="Email" /></div>
-    <div class="password"><input
-            type="text"
-            name="password"
-            id="password"
-            placeholder="Password"
-        /></div>
+<div class="petition-container">
+    <h1>Please log in</h1>
+    <form method="POST">
+        <div class="email">
+            <input
+                type="text"
+                name="email"
+                id="email"
+                placeholder="Email"
+            /></div>
+        <div class="password"><input
+                type="text"
+                name="password"
+                id="password"
+                placeholder="Password"
+            /></div>
 
-    <button> LOG IN </button>
-    {{#if error}} <h2>Something went wrong... please try again!</h2>{{/if}}
-    {{#if email}} <h2>Email address does not exists!</h2>{{/if}}
-    <input type="hidden" name="_csrf" value="{{csrfToken}}" />
-</form>
+        <button> LOG IN </button>
+        {{#if error}} <h2>Something went wrong... please try again!</h2>{{/if}}
+        {{#if email}} <h2>Email address does not exists!</h2>{{/if}}
+        <input type="hidden" name="_csrf" value="{{csrfToken}}" />
+        <h2>Haven't registered yet? Register <a href="/register">here</a>.</h2>
+    </form>
+</div>

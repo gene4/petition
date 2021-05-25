@@ -6,7 +6,12 @@ const express = require("express");
 const app = express();
 const db = require("./db");
 const cookieSession = require("cookie-session");
-
+const {
+    requireLoggedInUser,
+    requireLoggedOutUser,
+    requireNoSignature,
+    requireSignature,
+} = require("./middleware");
 const hb = require("express-handlebars");
 const { hash, compare } = require("./bcrypt");
 const csurf = require("csurf");
@@ -63,17 +68,19 @@ app.use(function (req, res, next) {
 
 app.use(express.static("public"));
 
+app.use(requireLoggedInUser);
+
 ///////////////////////
 ////////ROUTES////////
 /////////////////////
 
-app.get("/register", (req, res) => {
+app.get("/register", requireLoggedOutUser, (req, res) => {
     res.render("register", {
         layout: "main",
     });
 });
 
-app.get("/login", (req, res) => {
+app.get("/login", requireLoggedOutUser, (req, res) => {
     res.render("login", {
         layout: "main",
     });
@@ -83,10 +90,7 @@ app.get("/", (req, res) => {
     res.redirect("/login");
 });
 
-app.get("/petition", (req, res) => {
-    if ("signatureId" in req.session) {
-        res.redirect("/thanks");
-    }
+app.get("/petition", requireNoSignature, (req, res) => {
     res.render("petition", {
         layout: "main",
     });
@@ -122,7 +126,7 @@ app.post("/profile", (req, res) => {
         });
 });
 
-app.post("/register", (req, res) => {
+app.post("/register", requireLoggedOutUser, (req, res) => {
     hash(req.body.password)
         .then((hashedPw) => {
             console.log("hashedPwd in /register", hashedPw);
@@ -142,38 +146,49 @@ app.post("/register", (req, res) => {
         })
         .catch((err) => console.log("err in hash:", err));
 });
-app.post("/login", (req, res) => {
+app.post("/login", requireLoggedOutUser, (req, res) => {
     db.getUser(req.body.email)
         .then((result) => {
-            let hashFromDb = result.rows[0].password;
-            compare(req.body.password, hashFromDb)
-                .then((match) => {
-                    if (match) {
-                        req.session.userId = result.rows[0].id;
-                        console.log("match password", req.session);
-                        db.checkSigned(req.session.userId)
-                            .then((result) => {
-                                console.log("result after checkSigned", result);
-                                if (result.rows[0]) {
-                                    req.session.signatureId = result.rows[0].id;
-                                    res.redirect("/thanks");
-                                } else {
-                                    res.redirect("/petition");
-                                }
-                            })
-                            .catch((e) => {
-                                console.log(e);
-                            });
-                    } else {
-                        res.render("login", {
-                            layout: "main",
-                            error: true,
-                        });
-                    }
-                })
-                .catch((e) => {
-                    console.log("cant find password", e);
+            if (!req.body.email) {
+                res.render("login", {
+                    layout: "main",
+                    error: true,
                 });
+            } else {
+                let hashFromDb = result.rows[0].password;
+                compare(req.body.password, hashFromDb)
+                    .then((match) => {
+                        if (match) {
+                            req.session.userId = result.rows[0].id;
+                            console.log("match password", req.session);
+                            db.checkSigned(req.session.userId)
+                                .then((result) => {
+                                    console.log(
+                                        "result after checkSigned",
+                                        result
+                                    );
+                                    if (result.rows[0]) {
+                                        req.session.signatureId =
+                                            result.rows[0].id;
+                                        res.redirect("/thanks");
+                                    } else {
+                                        res.redirect("/petition");
+                                    }
+                                })
+                                .catch((e) => {
+                                    console.log(e);
+                                });
+                        } else {
+                            res.render("login", {
+                                layout: "main",
+                                error: true,
+                            });
+                        }
+                    })
+                    .catch((e) => {
+                        console.log("cant find password", e);
+                    });
+            }
         })
         .catch((e) => {
             console.log("cant find email", e);
@@ -184,7 +199,7 @@ app.post("/login", (req, res) => {
         });
 });
 
-app.post("/petition", (req, res) => {
+app.post("/petition", requireNoSignature, (req, res) => {
     db.addSignature(req.body.sig, req.session.userId)
         .then((result) => {
             req.session.signatureId = result.rows[0].id;
@@ -200,25 +215,21 @@ app.post("/petition", (req, res) => {
         });
 });
 
-app.get("/thanks", (req, res) => {
-    if (req.session.signatureId) {
-        db.getUserSignature(req.session.signatureId)
-            .then((result) => {
-                // console.log(result.rows[0].signature);
-                res.render("thanks", {
-                    layout: "main",
-                    signature: result.rows[0].signature,
-                });
-            })
-            .catch((e) => {
-                console.log(e);
+app.get("/thanks", requireSignature, (req, res) => {
+    db.getUserSignature(req.session.signatureId)
+        .then((result) => {
+            // console.log(result.rows[0].signature);
+            res.render("thanks", {
+                layout: "main",
+                signature: result.rows[0].signature,
             });
-    } else {
-        res.redirect("/petition");
-    }
+        })
+        .catch((e) => {
+            console.log(e);
+        });
 });
 
-app.post("/thanks", (req, res) => {
+app.post("/thanks", requireSignature, (req, res) => {
     db.deleteSig(req.session.userId)
         .then((result) => {
             req.session.signatureId = null;
@@ -247,7 +258,7 @@ app.get("/signers", (req, res) => {
     }
 });
 
-app.get("/signers/:city", (req, res) => {
+app.get("/signers/:city", requireSignature, (req, res) => {
     // console.log(req.params.city);
     db.getSignedUsersByCity(req.params.city)
         .then(({ rows }) => {

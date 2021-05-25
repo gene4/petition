@@ -1,19 +1,51 @@
+@import url("http://fonts.cdnfonts.com/css/lab-grotesque");
+
 body {
     color: #35302e;
-    background-color: rgb(231, 231, 231);
 }
 
 .petition-container {
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: center;
+    height: 100%;
 }
 h1 {
-    font-family: "Roboto", sans-serif;
-    font-size: 36px;
-    font-weight: 500;
+    font-family: "Lab Grotesque", sans-serif;
+    font-size: 2.875rem;
+    font-weight: 50;
+    -webkit-font-smoothing: antialiased;
+    text-align: center;
+    margin: 3px;
 }
 
+h2 {
+    font-family: "Lab Grotesque", sans-serif;
+    font-size: 1.25rem;
+    font-weight: 50;
+    -webkit-font-smoothing: antialiased;
+}
+
+h3 {
+    font-family: "Lab Grotesque", sans-serif;
+    font-size: 2.5rem;
+    font-weight: 50;
+    -webkit-font-smoothing: antialiased;
+    margin-bottom: 10px;
+    margin-top: 10px;
+}
+
+a {
+    text-decoration-thickness: 1.5px;
+    font-family: "Lab Grotesque", sans-serif;
+    -webkit-font-smoothing: antialiased;
+    font-weight: 50;
+    color: #35302e;
+}
+a:hover {
+    color: rgb(253, 69, 0);
+}
 form {
     display: flex;
     flex-direction: column;
@@ -22,22 +54,20 @@ form {
 }
 
 input {
-    width: 200px;
+    font-weight: 50;
+    width: 375px;
     padding: 8px;
-    font-size: 1rem;
-    border-radius: 5px;
+    font-size: 1.25rem;
+    font-family: "Lab Grotesque", sans-serif;
     margin: 2px;
-    border: solid 1px #dbd9db;
+    border: none;
+    border-bottom: 2px rgb(253, 69, 0) solid;
 }
-
-.first-name,
-.last-name {
-    width: 250px;
-
-    font-family: "Roboto", sans-serif;
-
-    display: flex;
-    justify-content: space-around;
+::-webkit-input-placeholder {
+    /* Chrome/Opera/Safari */
+    font: "Lab Grotesque";
+    -webkit-font-smoothing: antialiased;
+    font-size: 1.25rem;
 }
 
 #sign-here {
@@ -45,20 +75,34 @@ input {
     margin: 10px;
 }
 
-img {
-    border-radius: 50%;
-}
 button {
-    margin: 10px;
+    border-radius: 50px;
+    margin-top: 30px;
     width: 100px;
+    padding: 7px;
+    width: 185px;
+    border: 1.5px solid rgb(253, 69, 0);
+    background-color: white;
+    -webkit-font-smoothing: antialiased;
+    font-family: "Lab Grotesque", sans-serif;
+    color: rgb(253, 69, 0);
+    font-size: 20px;
+    cursor: pointer;
 }
+
+button:hover {
+    background-color: rgb(253, 69, 0);
+    color: white;
+}
+
 #sig-url {
     visibility: hidden;
 }
 
 canvas {
-    border: black solid 2px;
+    border: black solid 1px;
     z-index: 1;
-    width: 250px;
+    width: 400px;
     height: 80px;
+    border-radius: 50px;
 }
