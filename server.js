@@ -6,9 +6,10 @@ const express = require("express");
 const app = express();
 const db = require("./db");
 const cookieSession = require("cookie-session");
-const csurf = require("csurf");
+
 const hb = require("express-handlebars");
 const { hash, compare } = require("./bcrypt");
+const csurf = require("csurf");
 
 /////////////////////////////////
 /// HANDLEBARS BOILERPLATE /////
@@ -21,17 +22,27 @@ app.set("view engine", "handlebars");
 //////// MIDDLEWARE //////
 /////////////////////////
 
-const COOKIE_SECRET =
+if (process.env.NODE_ENV == "production") {
+    app.use((req, res, next) => {
+        if (req.headers["x-forwarded-proto"].startsWith("https")) {
+            return next();
+        }
+        res.redirect(`https://${req.hostname}${req.url}`);
+    });
+}
+
+const secret =
     process.env.COOKIE_SECRET || require("./secrets.json").COOKIE_SECRET;
 
 app.use((req, res, next) => {
     res.setHeader("x-frame-options", "deny");
+
     next();
 });
 
 app.use(
     cookieSession({
-        COOKIE_SECRET,
+        secret,
         maxAge: 1000 * 60 * 60 * 24 * 14,
         sameSite: "strict",
     })
@@ -69,7 +80,7 @@ app.get("/login", (req, res) => {
 });
 
 app.get("/", (req, res) => {
-    res.redirect("/petition");
+    res.redirect("/login");
 });
 
 app.get("/petition", (req, res) => {
@@ -190,7 +201,7 @@ app.post("/petition", (req, res) => {
 });
 
 app.get("/thanks", (req, res) => {
-    if ("signatureId" in req.session) {
+    if (req.session.signatureId) {
         db.getUserSignature(req.session.signatureId)
             .then((result) => {
                 // console.log(result.rows[0].signature);
@@ -207,11 +218,22 @@ app.get("/thanks", (req, res) => {
     }
 });
 
+app.post("/thanks", (req, res) => {
+    db.deleteSig(req.session.userId)
+        .then((result) => {
+            req.session.signatureId = null;
+            res.redirect("/petition");
+        })
+        .catch((e) => {
+            console.log(e);
+        });
+});
+
 app.get("/signers", (req, res) => {
     if ("signatureId" in req.session) {
         db.getSignedUsers()
             .then(({ rows }) => {
-                console.log(rows);
+                // console.log(rows);
                 res.render("signers", {
                     layout: "main",
                     rows,
@@ -226,9 +248,90 @@ app.get("/signers", (req, res) => {
 });
 
 app.get("/signers/:city", (req, res) => {
-    res.render("signers-city", {
-        layout: "main",
-    });
+    // console.log(req.params.city);
+    db.getSignedUsersByCity(req.params.city)
+        .then(({ rows }) => {
+            // console.log(rows);
+            res.render("signers-city", {
+                layout: "main",
+                rows,
+                city: req.params.city,
+            });
+        })
+        .catch((e) => {
+            console.log(e);
+        });
+});
+app.get("/profile/edit", (req, res) => {
+    db.getProfile(req.session.userId)
+        .then(({ rows }) => {
+            res.render("edit-profile", {
+                layout: "main",
+                rows,
+            });
+        })
+        .catch((e) => {
+            console.log(e);
+        });
+});
+
+app.post("/profile/edit", (req, res) => {
+    if (!req.body.password) {
+        db.updateUsers(
+            req.body.first,
+            req.body.last,
+            req.body.email,
+            req.session.userId
+        )
+            .then((result) => {
+                db.updateUsersProfile(
+                    req.body.age,
+                    req.body.city,
+                    req.body.homepage,
+                    req.session.userId
+                )
+                    .then((result) => {
+                        res.render("profile-changed", {
+                            layout: "main",
+                        });
+                    })
+                    .catch((e) => {
+                        console.log(e);
+                    });
+            })
+            .catch((e) => {
+                console.log(e);
+            });
+    } else {
+        hash(req.body.password).then((hashedPw) => {
+            db.updateUsersPassword(
+                req.body.first,
+                req.body.last,
+                req.body.email,
+                hashedPw,
+                req.session.userId
+            )
+                .then((result) => {
+                    db.updateUsersProfile(
+                        req.body.age,
+                        req.body.city,
+                        req.body.homepage,
+                        req.session.userId
+                    )
+                        .then((result) => {
+                            res.render("profile-changed", {
+                                layout: "main",
+                            });
+                        })
+                        .catch((e) => {
+                            console.log(e);
+                        });
+                })
+                .catch((e) => {
+                    console.log(e);
+                });
+        });
+    }
 });
 
 app.listen(process.env.PORT || 8080, () =>

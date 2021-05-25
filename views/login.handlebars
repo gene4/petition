@@ -9,9 +9,8 @@
             placeholder="Password"
         /></div>
 
-    <input type="hidden" name="_csrf" value="{{csrfToken}}" />
-
     <button> LOG IN </button>
     {{#if error}} <h2>Something went wrong... please try again!</h2>{{/if}}
     {{#if email}} <h2>Email address does not exists!</h2>{{/if}}
+    <input type="hidden" name="_csrf" value="{{csrfToken}}" />
 </form>

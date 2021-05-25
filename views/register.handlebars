@@ -26,8 +26,8 @@
             placeholder="Password"
         /></div>
 
-    <input type="hidden" name="_csrf" value="{{csrfToken}}" />
     <button> Register </button>
+    <input type="hidden" name="_csrf" value="{{csrfToken}}" />
     {{#if error}} <h2>Something went wrong... please try again!</h2>{{/if}}
 
 </form>

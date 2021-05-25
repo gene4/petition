@@ -1,1 +1,5 @@
 <h1>Thank you for signing!, <img src="{{signature}}" alt="" /></h1>
+<form method="POST">
+    <button>Delete your signature</button>
+    <input type="hidden" name="_csrf" value="{{csrfToken}}" />
+</form>
