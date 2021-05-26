@@ -12,6 +12,7 @@ body {
     align-items: center;
     justify-content: center;
     height: 100%;
+    width: 100%;
 }
 h1 {
     font-family: "Lab Grotesque", sans-serif;
@@ -186,4 +187,74 @@ span {
     font-family: "Lab Grotesque", sans-serif;
     font-size: 14px;
     margin: 2px;
+}
+
+@media screen and (min-width: 320px) and (max-width: 480px) {
+    h1 {
+        font-size: 1.7rem;
+    }
+    br {
+        content: " ";
+        display: none;
+    }
+    #mail {
+        width: 110px;
+        height: 110px;
+        break-inside: avoid;
+    }
+
+    h3 {
+        font-size: 1.2rem;
+        text-align: center;
+    }
+
+    h2 {
+        font-size: 1rem;
+        margin-bottom: 10px;
+        padding: 5px;
+    }
+
+    input {
+        width: 240px;
+    }
+
+    form {
+        margin: 0px;
+    }
+
+    nav {
+        align-items: center;
+        height: 30px;
+    }
+    nav div {
+        display: flex;
+        align-items: center;
+    }
+    nav a {
+        font-size: 10px;
+        margin: 3px;
+    }
+
+    nav h2 {
+        font-size: 10px;
+        margin: 3px;
+    }
+
+    canvas {
+        width: 300px;
+    }
+
+    img {
+        margin-bottom: 20px;
+    }
+
+    span {
+        display: flex;
+        flex-direction: column;
+        margin-bottom: 10px;
+    }
+
+    button {
+        margin-top: 20px;
+    }
 }
