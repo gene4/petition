@@ -1,6 +1,11 @@
+{{> nav}}
+<div class="petition-container">
+     <img id="mail" src="/email.png" alt="sad-mail">
+    <h1 id="city">All our signers:</h1>
 <div class="signers">
     {{#rows}}
-        <h1><a href="{{homepage}}">{{first}} {{last}} </a>{{age}},
-            <a href="./signers/{{city}}">{{city}}</a></h1>
+        <h3><a href="{{homepage}}">{{first}} {{last}} </a>{{age}},
+            <a href="./signers/{{city}}">{{city}}</a></h3>
     {{/rows}}
+</div>
 </div>

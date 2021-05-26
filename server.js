@@ -73,6 +73,7 @@ app.use(requireLoggedInUser);
 ///////////////////////
 ////////ROUTES////////
 /////////////////////
+let name = "";
 
 app.get("/register", requireLoggedOutUser, (req, res) => {
     res.render("register", {
@@ -87,7 +88,7 @@ app.get("/login", requireLoggedOutUser, (req, res) => {
 });
 
 app.get("/", (req, res) => {
-    res.redirect("/login");
+    res.redirect("/register");
 });
 
 app.get("/petition", requireNoSignature, (req, res) => {
@@ -159,6 +160,7 @@ app.post("/login", requireLoggedOutUser, (req, res) => {
                 compare(req.body.password, hashFromDb)
                     .then((match) => {
                         if (match) {
+                            req.session.name = result.rows[0].first;
                             req.session.userId = result.rows[0].id;
                             console.log("match password", req.session);
                             db.checkSigned(req.session.userId)
@@ -222,6 +224,7 @@ app.get("/thanks", requireSignature, (req, res) => {
             res.render("thanks", {
                 layout: "main",
                 signature: result.rows[0].signature,
+                name: req.session.name,
             });
         })
         .catch((e) => {
@@ -343,6 +346,11 @@ app.post("/profile/edit", (req, res) => {
                 });
         });
     }
+});
+
+app.get("/logout", (req, res) => {
+    req.session = null;
+    res.redirect("/login");
 });
 
 app.listen(process.env.PORT || 8080, () =>

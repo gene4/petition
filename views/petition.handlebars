@@ -1,3 +1,4 @@
+ {{> nav}}
 <div class="petition-container">
     <h1>Sign our petition to make German bureau's cease
         <br />
@@ -5,11 +6,13 @@
     <form method="POST">
 
         <h2>Sign Here:</h2>
-        <canvas id="canvas"></canvas>
+        <canvas id="canvas" width="400" height="80"></canvas>
         <input type="hidden" name="_csrf" value="{{csrfToken}}" />
         <button> submit </button>
         {{#if error}} <h2>Something went wrong... please try again!</h2>{{/if}}
         <input type="text" name="sig" id="sig-url" />
 
     </form>
+   
 </div>
+<script src="script.js"></script>

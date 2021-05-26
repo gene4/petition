@@ -1,7 +1,9 @@
-@import url("http://fonts.cdnfonts.com/css/lab-grotesque");
+@import url("https://fonts.cdnfonts.com/css/lab-grotesque");
 
 body {
     color: #35302e;
+    margin: 0;
+    height: 100vh;
 }
 
 .petition-container {
@@ -95,14 +97,83 @@ button:hover {
     color: white;
 }
 
+input:focus {
+    outline: none;
+}
+
 #sig-url {
     visibility: hidden;
 }
 
 canvas {
     border: black solid 1px;
-    z-index: 1;
-    width: 400px;
-    height: 80px;
     border-radius: 50px;
+}
+
+nav {
+    display: flex;
+    height: 35px;
+    border-bottom: 1px #35302e solid;
+    align-items: center;
+    justify-content: flex-end;
+    background-color: black;
+}
+
+nav a {
+    color: white;
+    text-decoration: none;
+    font-size: 20px;
+    margin: 10px;
+}
+@keyframes rotation {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(359deg);
+    }
+}
+#mail {
+    width: 150px;
+    height: 150px;
+    animation: rotation 5s infinite linear;
+    margin-bottom: 10px;
+}
+
+img {
+    margin-top: 20px;
+    width: 400px;
+    height: 80;
+}
+
+#delete {
+    width: 250px;
+    margin: 0;
+}
+.signers {
+    text-align: center;
+    font-size: 2rem;
+    margin-top: 10px;
+}
+
+.signers a {
+    text-decoration: none;
+    font-weight: 50;
+}
+
+#city {
+    color: rgb(253, 69, 0);
+}
+
+span {
+    display: flex;
+}
+
+#edit input {
+    padding: 3px;
+}
+#edit label {
+    font-family: "Lab Grotesque", sans-serif;
+    font-size: 14px;
+    margin: 2px;
 }

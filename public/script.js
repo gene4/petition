@@ -5,12 +5,6 @@ var sigUrl = document.getElementById("sig-url");
 let x = 0;
 let y = 0;
 
-// ctx.canvas.width = canvas.innerWidth;
-// ctx.canvas.height = canvas.innerHeight;
-
-button.addEventListener("mouseenter", () => {
-    button.classList.add("overlay");
-});
 document.addEventListener("mousedown", function startPos(e) {
     document.addEventListener("mousemove", draw);
     reposition(e);
@@ -28,7 +22,7 @@ function reposition(event) {
 
 function draw(e) {
     ctx.beginPath();
-    ctx.lineWidth = 3;
+    ctx.lineWidth = 2;
     ctx.lineCap = "round";
 
     ctx.moveTo(x, y);

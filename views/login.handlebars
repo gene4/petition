@@ -1,5 +1,10 @@
 <div class="petition-container">
-    <h1>Please log in</h1>
+    <img id="mail" src="/email.png" alt="sad-mail">
+    <h1>Lets make German bureau's stop using paper
+        <br />
+        letters as a means of communication!
+        <br />
+    <h3>Please log in to sign our petition!</h3>
     <form method="POST">
         <div class="email">
             <input
@@ -19,6 +24,6 @@
         {{#if error}} <h2>Something went wrong... please try again!</h2>{{/if}}
         {{#if email}} <h2>Email address does not exists!</h2>{{/if}}
         <input type="hidden" name="_csrf" value="{{csrfToken}}" />
-        <h2>Haven't registered yet? Register <a href="/register">here</a>.</h2>
+        <h2>Haven't registered yet?! Register <a href="/register">here</a>.</h2>
     </form>
 </div>

@@ -1,33 +1,33 @@
+{{> nav}}
+<div class="petition-container">
 <h1>Edit your profile</h1>
-
-<form method="POST">
+<form id="edit" method="POST">
     {{#rows}}
-        <div class="first-name">
+        
             <input type="text" name="first" value="{{first}}" />
-            <label for="first">First Name</label></div>
-        <div class="last-name"><input
+            <label for="first">First Name</label>
+        <input
                 type="text"
                 name="last"
                 value="{{last}}"
-            /><label for="last">Last Name</label></div>
-        <div class="email">
+            /><label for="last">Last Name</label>
             <input type="text" name="email" value="{{email}}" />
-            <label for="email">Email Address</label></div>
-        <div class="password"><input
+            <label for="email">Email Address</label>
+            <input
                 type="text"
                 name="password"
                 id="password"
             />
-            <label for="password">Password</label></div>
-        <div class="age">
+            <label for="password">Password</label>
+      
             <input type="text" name="age" value="{{age}}" />
-            <label for="age">Age</label></div>
-        <div class="city">
+            <label for="age">Age</label>
+       
             <input type="text" name="city" value="{{city}}" />
-            <label for="city">City</label></div>
-        <div class="homepage">
+            <label for="city">City</label>
+       
             <input type="text" name="homepage" value="{{homepage}}" />
-            <label for="homepage">Homepage</label></div>
+            <label for="homepage">Homepage</label>
 
         <button> Update </button>
         {{#if update}} <h2>Your profile was updated!</h2>{{/if}}
@@ -35,3 +35,4 @@
 
     <input type="hidden" name="_csrf" value="{{csrfToken}}" />
 </form>
+</div>

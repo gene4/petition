@@ -1,4 +1,11 @@
-<h1>Humens who signed from {{city}}</h1>
+{{> nav}}
+<div class="petition-container">
+     <img id="mail" src="/email.png" alt="sad-mail">
+     <span>
+<h1>Humens who signed from: </h1><h1 id= "city">{{city}}!</h1></span>
+<div class="signers">
 {{#rows}}
     <h1><a href="{{homepage}}">{{first}} {{last}} </a>{{age}}</h1>
 {{/rows}}
+</div>
+</div>
