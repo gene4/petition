@@ -50,7 +50,7 @@ module.exports.addUser = (first, last, email, password) => {
     const q = `
     INSERT INTO users (first, last, email, password)
     values ($1, $2, $3, $4)  
-    RETURNING id
+    RETURNING id , first
     `;
     const params = [first, last, email, password];
     return db.query(q, params);
@@ -62,7 +62,7 @@ module.exports.addProfile = (age, city, homepage, user_id) => {
     values ($1, $2, $3, $4)  
     RETURNING id
     `;
-    const params = [age, city, homepage, user_id];
+    const params = [age || null, city || null, homepage || null, user_id];
     return db.query(q, params);
 };
 

@@ -73,7 +73,6 @@ app.use(requireLoggedInUser);
 ///////////////////////
 ////////ROUTES////////
 /////////////////////
-let name = "";
 
 app.get("/register", requireLoggedOutUser, (req, res) => {
     res.render("register", {
@@ -91,42 +90,6 @@ app.get("/", (req, res) => {
     res.redirect("/register");
 });
 
-app.get("/petition", requireNoSignature, (req, res) => {
-    res.render("petition", {
-        layout: "main",
-    });
-});
-
-app.get("/profile", (req, res) => {
-    res.render("profile", {
-        layout: "main",
-    });
-});
-
-app.post("/profile", (req, res) => {
-    let checkedHompage = "";
-    if (
-        req.body.homepage.startsWith("http://") ||
-        req.body.homepage.startsWith("https://")
-    ) {
-        checkedHompage = req.body.homepage;
-    } else {
-        checkedHompage = "https://" + req.body.homepage;
-    }
-    db.addProfile(
-        req.body.age,
-        req.body.city,
-        checkedHompage,
-        req.session.userId
-    )
-        .then((result) => {
-            res.redirect("/petition");
-        })
-        .catch((e) => {
-            console.log(e);
-        });
-});
-
 app.post("/register", requireLoggedOutUser, (req, res) => {
     hash(req.body.password)
         .then((hashedPw) => {
@@ -134,6 +97,7 @@ app.post("/register", requireLoggedOutUser, (req, res) => {
             db.addUser(req.body.first, req.body.last, req.body.email, hashedPw)
                 .then((result) => {
                     req.session.userId = result.rows[0].id;
+                    req.session.name = result.rows[0].first;
                     console.log(req.session);
                     res.redirect("/profile");
                 })
@@ -201,6 +165,44 @@ app.post("/login", requireLoggedOutUser, (req, res) => {
         });
 });
 
+app.get("/petition", requireNoSignature, (req, res) => {
+    res.render("petition", {
+        layout: "main",
+        name: req.session.name,
+    });
+});
+
+app.get("/profile", (req, res) => {
+    res.render("profile", {
+        layout: "main",
+        name: req.session.name,
+    });
+});
+
+app.post("/profile", (req, res) => {
+    let checkedHompage = "";
+    if (
+        req.body.homepage.startsWith("http://") ||
+        req.body.homepage.startsWith("https://")
+    ) {
+        checkedHompage = req.body.homepage;
+    } else {
+        checkedHompage = "https://" + req.body.homepage;
+    }
+    db.addProfile(
+        req.body.age,
+        req.body.city,
+        checkedHompage,
+        req.session.userId
+    )
+        .then((result) => {
+            res.redirect("/petition");
+        })
+        .catch((e) => {
+            console.log(e);
+        });
+});
+
 app.post("/petition", requireNoSignature, (req, res) => {
     db.addSignature(req.body.sig, req.session.userId)
         .then((result) => {
@@ -251,6 +253,7 @@ app.get("/signers", (req, res) => {
                 res.render("signers", {
                     layout: "main",
                     rows,
+                    name: req.session.name,
                 });
             })
             .catch((e) => {
@@ -270,6 +273,7 @@ app.get("/signers/:city", requireSignature, (req, res) => {
                 layout: "main",
                 rows,
                 city: req.params.city,
+                name: req.session.name,
             });
         })
         .catch((e) => {
@@ -282,6 +286,7 @@ app.get("/profile/edit", (req, res) => {
             res.render("edit-profile", {
                 layout: "main",
                 rows,
+                name: req.session.name,
             });
         })
         .catch((e) => {
@@ -307,6 +312,7 @@ app.post("/profile/edit", (req, res) => {
                     .then((result) => {
                         res.render("profile-changed", {
                             layout: "main",
+                            name: req.session.name,
                         });
                     })
                     .catch((e) => {
